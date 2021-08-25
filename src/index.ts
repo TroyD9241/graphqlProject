@@ -17,7 +17,7 @@ const startServer = async () => {
     const typeDefs = gql`
     type Query {
       hello: String
-      users: [User]
+      user(id: ID!): User!
     }
 
     type User {
@@ -27,6 +27,33 @@ const startServer = async () => {
         username: String!
         profilePicture: String!
         about: String!
+        stories: [Story]
+        comments: [Comment]
+        likes: [Like]
+    }
+
+    type Story {
+        id: ID!
+        storyBody: String!
+        title: String!
+    },
+
+    type Comment {
+        id: ID!
+        commentBody: String!
+    }
+
+    type Like {
+        id: ID!
+    }
+
+    type StoryPhoto {
+        id: ID!
+    }
+
+    type Topic {
+        id: ID!
+        topicName: String!
     }
   `;
 
@@ -35,10 +62,11 @@ const startServer = async () => {
     const resolvers = {
         Query: {
             hello: () => 'Hello world!',
-            users: () => {
-                return prisma.user.findMany()
+            userProfile: () => {
+                return prisma.user.findMany
             }
         },
+
     };
     // 5
     // initialization of apollo-server
