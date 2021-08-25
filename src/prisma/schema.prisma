@@ -9,3 +9,59 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model User {
+  id             Int       @id @default(autoincrement())
+  actualName     String?   @db.VarChar(200)
+  username       String    @unique @db.VarChar(40)
+  email          String    @unique @db.VarChar(30)
+  passhash       String
+  about          String?   @db.Text
+  profilePicture String?
+  stories        Story[]
+  comments       Comment[]
+  likes          Like[]
+}
+
+model Story {
+  id          Int          @id @default(autoincrement())
+  title       String       @db.VarChar(50)
+  storyBody   String       @db.Text
+  User        User?        @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  topics      Topic[]
+  comments    Comment[]
+  likes       Like[]
+  storyPhotos StoryPhoto[]
+}
+
+model Comment {
+  id             Int    @id @default(autoincrement())
+  commentBody    String @db.VarChar(255)
+  User           User?  @relation(fields: [authorId], references: [id])
+  authorId       Int?
+  Story          Story? @relation(fields: [relatedStoryId], references: [id])
+  relatedStoryId Int?
+}
+
+model StoryPhoto {
+  id       Int    @id @default(autoincrement())
+  Story    Story? @relation(fields: [storyId], references: [id])
+  storyId  Int?
+  photoUrl String
+}
+
+model Like {
+  id      Int    @id @default(autoincrement())
+  User    User?  @relation(fields: [userId], references: [id])
+  userId  Int?
+  Story   Story? @relation(fields: [storyId], references: [id])
+  storyId Int?
+}
+
+model Topic {
+  id        Int    @id @default(autoincrement())
+  topicName String @unique
+  Story     Story? @relation(fields: [storyId], references: [id])
+  storyId   Int?
+}
